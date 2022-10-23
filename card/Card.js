@@ -4,8 +4,16 @@ export default class Card extends HTMLElement {
         this.data = JSON.parse(this.getAttribute('data'));
     }
 
+    onClick(evt) {
+      if(evt.target.closest('.btn')) {
+        const event = new CustomEvent('share-data', {bubbles: true, detail: this.data});  // share-data название события
+        this.dispatchEvent(event)
+      }
+    }
+
     connectedCallback() {
         this.render()
+        this.addEventListener('click', this.onClick)
     }
 
 
@@ -21,6 +29,7 @@ export default class Card extends HTMLElement {
             </div>
         </div>
         `;
-
     }
 }
+
+customElements.define('it-card',Card );
