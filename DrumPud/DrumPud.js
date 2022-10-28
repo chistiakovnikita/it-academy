@@ -1,60 +1,69 @@
-import { KEY_MAP, SOUNDS, COLORS } from './constants.js';
+import { KEY_MAP, COLORS, SOUNDS } from "./constants.js";
 
-const pads = document.querySelectorAll('.pad');
-const visual = document.querySelector('.visual');
+const pads = document.querySelectorAll(".pad");
+const visual = document.querySelector(".visual");
+
+const playSound = (sounds, ind) => {
+  var sound = sounds[ind];
+  var audio = new Audio(sound);
+  audio.load();
+  audio.play();
+};
+
+const animatePad = (index) => {
+  pads[index].style.animation = `dance 0.1s ease`;
+  pads[index].addEventListener("animationend", function () {
+    pads[index].style.animation = "none";
+  });
+};
+
+const changeColor = (colors, index) => {
+    const color = colors[index]
+    return color
+  }
 
 
-
-const playSound = (sounds, index) => {
-    const sound = sounds[index];
-    const audio = new Audio(sound);
-    audio.load();
-    audio.play()
-}
-
-const animatePad = (pads, index) => {
-    const pad = pads[index];
-    pad.style.animation = 'dance 0.1s';
-    pad.addEventListener('animationend', () => {
-        pad.style.animation = 'none';
-    })
-}
-
-
-
+const createBubble = (index) => {
   
+  const bubble = document.createElement("div");
+  bubble.style.animation = `jump 0.1s ease`;
+  visual.appendChild(bubble);
 
-const keyPressHandler = (evt) => {
-    switch (evt.key) {
-        case KEY_MAP.kick:
-            playSound(SOUNDS, 0)
-            animatePad(pads, 0)
-            break;
-        case KEY_MAP.cymbal:
-            playSound(SOUNDS, 1)
-            animatePad(pads, 1)
-            break;
-        case KEY_MAP.snare:
-            playSound(SOUNDS, 2)
-            animatePad(pads, 2)
-            break;
-        case KEY_MAP.openhat:
-            playSound(SOUNDS, 3)
-            animatePad(pads, 3)
-            break;
-        case KEY_MAP.longCrash:
-            playSound(SOUNDS, 4)
-            animatePad(pads, 4)
-            break;
-        case KEY_MAP.hihat:
-            playSound(SOUNDS, 5)
-            animatePad(pads, 5)
-            break;
+};
 
-        default:
-            break;
-    }
-}
+const play = (index) => {
+  playSound(SOUNDS, index);
+  animatePad(index);
+  createBubble(index);
+  changeColor(COLORS, index)
+};
 
+const keyPressHandler = ({ key }) => {
+  switch (key) {
+    case KEY_MAP.kick:
+      play(0);
+      break;
+    case KEY_MAP.cymbal:
+      play(1);
+      break;
+    case KEY_MAP.snare:
+      play(2);
+      break;
+    case KEY_MAP.openhat:
+      play(3);
+      break;
+    case KEY_MAP.longCrash:
+      play(4);
+      break;
+    case KEY_MAP.hihat:
+      play(5);
+      break;
 
-document.addEventListener('keypress', keyPressHandler);
+    default:
+      console.error("Error!!! Wrong a key");
+      break;
+  }
+};
+
+document.addEventListener("keypress", keyPressHandler);
+pads.addEventListener("keypress", createBubble );

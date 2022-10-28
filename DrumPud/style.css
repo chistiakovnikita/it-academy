@@ -73,6 +73,7 @@ header p {
   border-radius: 50%;
   transform: scale(1);
   z-index: -1;
+  
 }
 
 @keyframes jump {

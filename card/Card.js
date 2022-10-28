@@ -1,3 +1,6 @@
+import { STORAGE_KEYS } from './constants/storage.js';
+import storageService from './services/StorageService.js';
+
 export default class Card extends HTMLElement {
     constructor() {
         super();
@@ -5,10 +8,9 @@ export default class Card extends HTMLElement {
     }
 
     onClick(evt) {
-      if(evt.target.closest('.btn')) {
-        const event = new CustomEvent('share-data', {bubbles: true, detail: this.data});  // share-data название события
-        this.dispatchEvent(event)
-      }
+        if (evt.target.closest('.btn')) {
+            storageService.setItem(STORAGE_KEYS.cartData, [this.data])
+        }
     }
 
     connectedCallback() {
@@ -32,4 +34,4 @@ export default class Card extends HTMLElement {
     }
 }
 
-customElements.define('it-card',Card );
+customElements.define('it-card', Card);

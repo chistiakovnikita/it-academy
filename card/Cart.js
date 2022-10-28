@@ -1,25 +1,50 @@
-export default class Cart extends HTMLElement{
+import { STORAGE_KEYS } from "./constants/storage.js";
+import storageService from "./services/StorageService.js    ";
+
+
+export default class Cart extends HTMLElement {
     constructor() {
         super()
         this.quantity = 0;
         this.isVisible = false;   //  ? false
         this.data = [];
-        
+
+    }
+
+    cartDataAdapter(data) {
+        return data
+            .map((item, _, arr) => {
+                return {
+                    ...item,
+                    quantity: arr.filter((subItem) => subItem.id === item.id).length,
+                };
+            })
+            .filter(
+                (item, index, arr) =>
+                    arr.findIndex((finditem) => finditem.id === item.id) === index
+            );
     }
 
 
-    onToggleTable(evt){
-        if(evt.target.closest('.cart-link-icon')) {
+    initializeData() {
+        const data = storageService.getItem(STORAGE_KEYS.cartData);
+        this.data = data ? this.cartDataAdapter(data) : [];
+        this.quantity = data?.length ?? 0;
+    }
+
+
+    onToggleTable(evt) {
+        if (evt.target.closest('.cart-link-icon')) {
             evt.preventDefault();
-        this.isVisible = !this.isVisible;
-        this.render();
-       }
-         
+            this.isVisible = !this.isVisible;
+            this.render();
+        }
+
     }
 
 
-    onDeleteItem(evt){
-        if(evt.target.closest('.btn')) {
+    onDeleteItem(evt) {
+        if (evt.target.closest('.btn')) {
             const productId = Number(evt.target.dataset.productId);  // dataset.productId  из  data-product-id
             this.data = this.data.filter((item) => item.id !== productId)
             this.quantity = this.quantity - 1;
@@ -29,39 +54,42 @@ export default class Cart extends HTMLElement{
 
 
 
-    
+
     onClick(evt) {
-       this.onToggleTable(evt)
-       this.onDeleteItem(evt)
+        this.onToggleTable(evt)
+        this.onDeleteItem(evt)
     }
 
 
 
 
     watchOnData() {
-        window.addEventListener('share-data', (evt) => {    //  ? window
-            this.data = [...this.data, evt.detail];    // this.data.push(evt.detail)
+        window.addEventListener('storage', (evt) => {
+            this.data = this.cartDataAdapter(evt.detail.value);
             this.quantity = this.quantity + 1;
             this.render()
         })
     }
 
 
-   
+
 
     connectedCallback() {
-        this.render();
-        this.addEventListener('click', this.onClick);  // ? this.onClick а не  onClick
+        this.initializeData();
+        this.addEventListener('click', this.onClick);
         this.watchOnData();
+        this.render();
+
+
     }
 
 
     disconnectedCallback() {
         this.render();
-        this.removeEventListener('click', this.onClick) 
+        this.removeEventListener('click', this.onClick)
     }
 
-    
+
 
 
     render() {
@@ -87,7 +115,7 @@ export default class Cart extends HTMLElement{
                 <tbody>
                 ${this.data.length ? `
                     ${this.data.map((item) => {
-                        return `
+            return `
                             <tr>
                                 <th>${item.id}</th>
                                 <td>${item.title}</td>
@@ -100,7 +128,7 @@ export default class Cart extends HTMLElement{
                                 </td>
                             </tr>
                       `
-                    })
+        }).join(' ')
                     }
                 `: `
                     <tr>
