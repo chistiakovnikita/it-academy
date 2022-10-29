@@ -17,10 +17,7 @@ const animatePad = (index) => {
   });
 };
 
-const changeColor = (colors, index) => {
-    const color = colors[index]
-    return color
-  }
+
 
 
 const createBubble = (index) => {
@@ -35,7 +32,7 @@ const play = (index) => {
   playSound(SOUNDS, index);
   animatePad(index);
   createBubble(index);
-  changeColor(COLORS, index)
+ 
 };
 
 const keyPressHandler = ({ key }) => {
@@ -66,4 +63,4 @@ const keyPressHandler = ({ key }) => {
 };
 
 document.addEventListener("keypress", keyPressHandler);
-pads.addEventListener("keypress", createBubble );
+
